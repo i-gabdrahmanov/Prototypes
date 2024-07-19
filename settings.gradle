@@ -1,1 +1,3 @@
 rootProject.name = 'Prototypes'
+include ':service'
+include ':service:entityautofill'
