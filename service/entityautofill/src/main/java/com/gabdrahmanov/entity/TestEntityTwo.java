@@ -14,7 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "test_entity_two")
-public class TestEntityTwo {
+public class TestEntityTwo implements RegistryEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
