@@ -12,11 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "test_entity_one")
-public class TestEntityOne implements RegistryEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class TestEntityOne extends RegistryEntity {
 
     @Column
     private String name;
