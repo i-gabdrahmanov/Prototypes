@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EntityGenerator {
-    public static void fillRandomly(Object entity) throws InstantiationException, IllegalAccessException {
+    public static void fillRandomly(Object entity) {
         Class<?> entityClass = entity.getClass();
         for (Field field : entityClass.getDeclaredFields()) {
             field.setAccessible(true);
@@ -18,7 +18,7 @@ public class EntityGenerator {
 
                 // Проверка на вложенную Entity
                 if (fieldType.isAnnotationPresent(Entity.class)) {
-                    Object nestedEntity = fieldType.newInstance();
+                    Object nestedEntity = fieldType.getDeclaredConstructor().newInstance();
                     fillRandomly(nestedEntity); // Рекурсивный вызов для заполнения вложенной сущности
                     field.set(entity, nestedEntity);
                 }
@@ -26,12 +26,12 @@ public class EntityGenerator {
                 else if (Collection.class.isAssignableFrom(fieldType)) {
                     ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
                     Class<?> elementType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-                    Collection collection = (Collection) fieldType.newInstance();
+                    Collection collection = (Collection) fieldType.getDeclaredConstructor().newInstance();
                     if (elementType.isAnnotationPresent(Entity.class)) {
                         // Создание случайного количества вложенных сущностей
                         int randomCount = ThreadLocalRandom.current().nextInt(1, 5);
                         for (int i = 0; i < randomCount; i++) {
-                            Object nestedEntity = elementType.newInstance();
+                            Object nestedEntity = elementType.getDeclaredConstructor().newInstance();
                             fillRandomly(nestedEntity); // Рекурсивный вызов для заполнения вложенной сущности
                             collection.add(nestedEntity);
                         }
@@ -47,10 +47,12 @@ public class EntityGenerator {
                     } else if (fieldType == long.class) {
                         field.setLong(entity, ThreadLocalRandom.current().nextLong());
                     }
-                } else if (fieldType == double.class) {
-                    field.setDouble(entity, ThreadLocalRandom.current().nextDouble());
-                } else if (fieldType == String.class) {
-                    field.set(entity, UUID.randomUUID().toString());
+                else if (fieldType == double.class) {
+                        field.setDouble(entity, ThreadLocalRandom.current().nextDouble());
+                    }
+                 else if (fieldType == String.class) {
+                        field.set(entity, UUID.randomUUID().toString());
+                    }
                 }
 
                 // Проверка на Enum
