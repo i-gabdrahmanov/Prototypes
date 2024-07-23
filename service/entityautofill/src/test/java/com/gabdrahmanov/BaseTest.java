@@ -10,15 +10,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.lang.reflect.InvocationTargetException;
+
 @SpringBootTest(classes = EntityAutofill.class)
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BaseTest {
 
     @Test
-    void test() throws InstantiationException, IllegalAccessException {
+    void test() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         TestEntityOne entityOne = new TestEntityOne();
         EntityGenerator.fillRandomly(entityOne);
-        Assertions.assertEquals(8, entityOne.getCost());
+        //Assertions.assertEquals(8, entityOne.getCost());
+        //Assertions.assertEquals("7", entityOne.getTestEntityTwo().getName());
+        Assertions.assertEquals("7", entityOne.getEntityThreeCollection());
     }
 }

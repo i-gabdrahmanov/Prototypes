@@ -3,13 +3,15 @@ package com.gabdrahmanov.utils;
 import jakarta.persistence.Entity;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EntityGenerator {
-    public static void fillRandomly(Object entity) {
+    public static void fillRandomly(Object entity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
         Class<?> entityClass = entity.getClass();
         for (Field field : entityClass.getDeclaredFields()) {
             field.setAccessible(true);
@@ -26,7 +28,10 @@ public class EntityGenerator {
                 else if (Collection.class.isAssignableFrom(fieldType)) {
                     ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
                     Class<?> elementType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-                    Collection collection = (Collection) fieldType.getDeclaredConstructor().newInstance();
+
+                    // Создание экземпляра конкретной реализации коллекции, например, ArrayList
+                    Collection collection = new ArrayList(); // или другой подходящий класс
+
                     if (elementType.isAnnotationPresent(Entity.class)) {
                         // Создание случайного количества вложенных сущностей
                         int randomCount = ThreadLocalRandom.current().nextInt(1, 5);
@@ -35,30 +40,28 @@ public class EntityGenerator {
                             fillRandomly(nestedEntity); // Рекурсивный вызов для заполнения вложенной сущности
                             collection.add(nestedEntity);
                         }
+                        field.set(entity, collection);
                     }
-                    field.set(entity, collection);
-                }
-                // Проверка на примитивные типы и String
-                else if (fieldType.isPrimitive() || fieldType == String.class) {
-                    if (fieldType == boolean.class) {
-                        field.setBoolean(entity, ThreadLocalRandom.current().nextBoolean());
-                    } else if (fieldType == int.class) {
-                        field.setInt(entity, ThreadLocalRandom.current().nextInt());
-                    } else if (fieldType == long.class) {
-                        field.setLong(entity, ThreadLocalRandom.current().nextLong());
+                    // Проверка на примитивные типы и String
+                    else if (fieldType.isPrimitive() || fieldType == String.class) {
+                        if (fieldType == boolean.class) {
+                            field.setBoolean(entity, ThreadLocalRandom.current().nextBoolean());
+                        } else if (fieldType == int.class) {
+                            field.setInt(entity, ThreadLocalRandom.current().nextInt());
+                        } else if (fieldType == long.class) {
+                            field.setLong(entity, ThreadLocalRandom.current().nextLong());
+                        } else if (fieldType == double.class) {
+                            field.setDouble(entity, ThreadLocalRandom.current().nextDouble());
+                        } else if (fieldType == String.class) {
+                            field.set(entity, UUID.randomUUID().toString());
+                        }
                     }
-                else if (fieldType == double.class) {
-                        field.setDouble(entity, ThreadLocalRandom.current().nextDouble());
-                    }
-                 else if (fieldType == String.class) {
-                        field.set(entity, UUID.randomUUID().toString());
-                    }
-                }
 
-                // Проверка на Enum
-                else if (fieldType.isEnum()) {
-                    Object[] enumConstants = fieldType.getEnumConstants();
-                    field.set(entity, enumConstants[ThreadLocalRandom.current().nextInt(enumConstants.length)]);
+                    // Проверка на Enum
+                    else if (fieldType.isEnum()) {
+                        Object[] enumConstants = fieldType.getEnumConstants();
+                        field.set(entity, enumConstants[ThreadLocalRandom.current().nextInt(enumConstants.length)]);
+                    }
                 }
             } catch (Exception e) {
                 // Обработка ошибок, например, выброс исключения или запись в лог
