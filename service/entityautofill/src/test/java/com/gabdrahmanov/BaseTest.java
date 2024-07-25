@@ -20,7 +20,9 @@ public class BaseTest {
     @Test
     void test() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         TestEntityOne entityOne = new TestEntityOne();
-        EntityGenerator.fillRandomly(entityOne);
+        EntityGenerator entityGenerator = new EntityGenerator();
+        entityGenerator.fillEntity(entityOne);
+        int i =2;
         //Assertions.assertEquals(8, entityOne.getCost());
         //Assertions.assertEquals("7", entityOne.getTestEntityTwo().getName());
         Assertions.assertEquals("7", entityOne.getEntityThreeCollection());

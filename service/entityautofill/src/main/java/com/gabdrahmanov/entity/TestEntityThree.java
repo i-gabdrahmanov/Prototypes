@@ -19,7 +19,7 @@ public class TestEntityThree {
     @Column
     private String someValue;
 
-//    @ManyToOne
-//    private TestEntityOne entityOne; надо бы побороть рекурсивный вызов
+    @ManyToOne
+    private TestEntityOne entityOne; // надо бы побороть рекурсивный вызов
 }
 
