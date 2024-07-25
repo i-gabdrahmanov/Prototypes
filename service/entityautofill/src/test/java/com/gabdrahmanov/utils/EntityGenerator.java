@@ -5,9 +5,7 @@ import jakarta.persistence.Entity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EntityGenerator {
@@ -22,7 +20,7 @@ public class EntityGenerator {
             field.setAccessible(true);
             String a = field.getType().getName();
             String b = parentEntity.getName();
-            int cfghj =3;
+            int cfghj = 3;
             try {
                 if (!field.getType().getName().equals(parentEntity.getName())) {
                     Class<?> fieldType = field.getType();
@@ -39,8 +37,15 @@ public class EntityGenerator {
                         Class<?> elementType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
                         // Создание экземпляра конкретной реализации коллекции, например, ArrayList
-                        Collection collection = new ArrayList(); // или другой подходящий класс
+                        Collection collection;
+                        if (Set.class.isAssignableFrom(fieldType)) {
+                            collection = new HashSet(); // или другой подходящий класс
+                        } else if (LinkedList.class.isAssignableFrom(fieldType)) {
 
+                            collection = new LinkedList();
+                        } else {
+                            collection = new ArrayList();
+                        }
                         if (elementType.isAnnotationPresent(Entity.class)) {
                             // Создание случайного количества вложенных сущностей
                             int randomCount = ThreadLocalRandom.current().nextInt(1, 5);
@@ -66,7 +71,6 @@ public class EntityGenerator {
                             }
                         }
 
-                        // Проверка на Enum
                         else if (fieldType.isEnum()) {
                             Object[] enumConstants = fieldType.getEnumConstants();
                             field.set(entity, enumConstants[ThreadLocalRandom.current().nextInt(enumConstants.length)]);
@@ -74,8 +78,8 @@ public class EntityGenerator {
                     }
                 }
             } catch (Exception e) {
-                // Обработка ошибок, например, выброс исключения или запись в лог
                 System.err.println("Ошибка при заполнении поля " + field.getName() + ": " + e.getMessage());
+                throw e;
             }
         }
     }

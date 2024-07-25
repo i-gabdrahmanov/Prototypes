@@ -21,4 +21,7 @@ public class TestEntityTwo extends RegistryEntity {
 
     @Column
     private Instant stardDate;
+
+    @ManyToOne
+    private TestEntityOne entityOne;
 }

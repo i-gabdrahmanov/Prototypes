@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -29,4 +30,8 @@ public class TestEntityOne extends RegistryEntity {
     @OneToMany
     @JoinColumn
     private Collection<TestEntityThree> entityThreeCollection;
+
+    @OneToMany
+    @JoinColumn
+    private Set<TestEntityTwo> entityTwoSet;
 }
