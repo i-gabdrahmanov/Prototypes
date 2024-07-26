@@ -23,6 +23,9 @@ public class TestEntityOne extends RegistryEntity {
     @Column
     private int cost;
 
+    @OneToOne
+    private TestEntityTwo previous;
+
     @ManyToOne
     @JoinColumn
     private TestEntityTwo testEntityTwo;
