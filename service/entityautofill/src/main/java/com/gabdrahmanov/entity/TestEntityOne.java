@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 
@@ -37,4 +38,6 @@ public class TestEntityOne extends RegistryEntity {
     @OneToMany
     @JoinColumn
     private Set<TestEntityTwo> entityTwoSet;
+
+    private Instant instant;
 }

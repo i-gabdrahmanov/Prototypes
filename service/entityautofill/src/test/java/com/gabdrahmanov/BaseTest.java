@@ -35,6 +35,7 @@ public class BaseTest {
                 if (!collection.isEmpty()) {
                     Object firstElement = collection.iterator().next();
                     Assertions.assertNotNull(firstElement);
+                } else {
                     throw new RuntimeException("Поле " + field.getName() + " не заполнено");
                 }
             } else if (field.getType().isAnnotationPresent(Entity.class) ){
