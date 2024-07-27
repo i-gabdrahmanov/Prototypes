@@ -10,17 +10,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EntityGenerator {
 
-    public void fillEntity(Object entity) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-        fillRandomly(entity, entity.getClass());
+    public Map<String, Object> fillEntity(Object entity) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+        return fillRandomly(entity, entity.getClass());
     }
 
-    private void fillRandomly(Object entity, Class<?> parentEntity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+    private Map<String, Object> fillRandomly(Object entity, Class<?> parentEntity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+        Map<String, Object> generatedFieldValues = new HashMap<>();
         Class<?> entityClass = entity.getClass();
         for (Field field : entityClass.getDeclaredFields()) {
             field.setAccessible(true);
-            String a = field.getType().getName();
-            String b = parentEntity.getName();
-            int cfghj = 3;
             try {
                 if (!field.getType().getName().equals(parentEntity.getName())) {
                     Class<?> fieldType = field.getType();
@@ -30,6 +28,7 @@ public class EntityGenerator {
                         Object nestedEntity = fieldType.getDeclaredConstructor().newInstance();
                         fillRandomly(nestedEntity, parentEntity); // Рекурсивный вызов для заполнения вложенной сущности
                         field.set(entity, nestedEntity);
+                        generatedFieldValues.put(field.getName(), entity);
                     }
                     // Проверка на Collection
                     else if (Collection.class.isAssignableFrom(fieldType)) {
@@ -51,36 +50,46 @@ public class EntityGenerator {
                             int randomCount = ThreadLocalRandom.current().nextInt(1, 5);
                             for (int i = 0; i < randomCount; i++) {
                                 Object nestedEntity = elementType.getDeclaredConstructor().newInstance();
-                                fillRandomly(nestedEntity, parentEntity); // Рекурсивный вызов для заполнения вложенной сущности
+                                fillRandomly(nestedEntity, parentEntity);
+                                generatedFieldValues.put(field.getName(), entity);// Рекурсивный вызов для заполнения вложенной сущности
                                 collection.add(nestedEntity);
                             }
                             field.set(entity, collection);
                         }
-                        // Проверка на примитивные типы и String
-                        else if (fieldType.isPrimitive() || fieldType == String.class) {
-                            if (fieldType == boolean.class) {
-                                field.setBoolean(entity, ThreadLocalRandom.current().nextBoolean());
-                            } else if (fieldType == int.class) {
-                                field.setInt(entity, ThreadLocalRandom.current().nextInt());
-                            } else if (fieldType == long.class) {
-                                field.setLong(entity, ThreadLocalRandom.current().nextLong());
-                            } else if (fieldType == double.class) {
-                                field.setDouble(entity, ThreadLocalRandom.current().nextDouble());
-                            } else if (fieldType == String.class) {
-                                field.set(entity, UUID.randomUUID().toString());
-                            }
+                    }
+                    // Проверка на примитивные типы и String
+                    else if (fieldType.isPrimitive() || fieldType == String.class) {
+                        Object value = new Object();
+                        if (fieldType == boolean.class) {
+                            value = ThreadLocalRandom.current().nextBoolean();
+                            field.setBoolean(entity, (boolean) value);
+                        } else if (fieldType == int.class) {
+                            value = ThreadLocalRandom.current().nextInt();
+                            field.setInt(entity, (int) value);
+                        } else if (fieldType == long.class) {
+                            value = ThreadLocalRandom.current().nextLong();
+                            field.setLong(entity, (long) value);
+                        } else if (fieldType == double.class) {
+                            value = ThreadLocalRandom.current().nextDouble();
+                            field.setDouble(entity, (double) value);
+                        } else if (fieldType == String.class) {
+                            value = UUID.randomUUID().toString();
+                            field.set(entity, value);
                         }
-
-                        else if (fieldType.isEnum()) {
-                            Object[] enumConstants = fieldType.getEnumConstants();
-                            field.set(entity, enumConstants[ThreadLocalRandom.current().nextInt(enumConstants.length)]);
-                        }
+                        generatedFieldValues.put(field.getName(), value);
+                    } else if (fieldType.isEnum()) {
+                        Object[] enumConstants = fieldType.getEnumConstants();
+                        Object enumConstant = enumConstants[ThreadLocalRandom.current().nextInt(enumConstants.length)];
+                        field.set(entity, enumConstant);
+                        generatedFieldValues.put(field.getName(), enumConstant);
                     }
                 }
+
             } catch (Exception e) {
                 System.err.println("Ошибка при заполнении поля " + field.getName() + ": " + e.getMessage());
                 throw e;
             }
         }
+        return generatedFieldValues;
     }
 }
