@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Set;
 
@@ -39,5 +41,15 @@ public class TestEntityOne extends RegistryEntity {
     @JoinColumn
     private Set<TestEntityTwo> entityTwoSet;
 
+    @Column
     private Instant instant;
+
+    @Column
+    private LocalDate localDate;
+
+    @Column
+    private ZonedDateTime zonedDateTime;
+
+    @Column
+    private Integer integer;
 }
