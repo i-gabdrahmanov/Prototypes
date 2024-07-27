@@ -27,14 +27,11 @@ public class BaseTest {
         EntityGenerator entityGenerator = new EntityGenerator();
         Map<String, Object> stringObjectMap = entityGenerator.fillEntity(entityOne);
         int i = 2; // debug flag
-        //Assertions.assertEquals(8, entityOne.getCost());
-        //Assertions.assertEquals("7", entityOne.getTestEntityTwo().getName());
-        //  Assertions.assertEquals("7", entityOne.getEntityThreeCollection());
         for (Field field : entityOne.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             Object value = field.get(entityOne);
-            if (Collection.class.isAssignableFrom(field.getType())) { // Проверяем, является ли значение коллекцией
-                Collection<?> collection = (Collection<?>) value; // Приводим к Collection
+            if (Collection.class.isAssignableFrom(field.getType())) {
+                Collection<?> collection = (Collection<?>) value;
                 if (!collection.isEmpty()) {
                     Object firstElement = collection.iterator().next();
                     Assertions.assertNotNull(firstElement);
