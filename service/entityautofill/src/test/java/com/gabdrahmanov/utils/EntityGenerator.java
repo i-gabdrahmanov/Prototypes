@@ -1,6 +1,7 @@
 package com.gabdrahmanov.utils;
 
 import jakarta.persistence.Entity;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -8,6 +9,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Component
 public class EntityGenerator {
 
     public Map<String, Object> fillEntity(Object entity) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
@@ -29,7 +31,7 @@ public class EntityGenerator {
                     // Проверка на вложенную Entity
                     if (fieldType.isAnnotationPresent(Entity.class)) {
                         Object nestedEntity = fieldType.getDeclaredConstructor().newInstance();
-                        fillRandomly(nestedEntity, parentEntity); // Рекурсивный вызов для заполнения вложенной сущности
+                    //    fillRandomly(nestedEntity, parentEntity); // Рекурсивный вызов для заполнения вложенной сущности
                         field.set(entity, nestedEntity);
                         generatedFieldValues.put(field.getName(), entity);
                     }
