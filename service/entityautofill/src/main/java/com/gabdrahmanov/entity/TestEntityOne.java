@@ -1,5 +1,6 @@
 package com.gabdrahmanov.entity;
 
+import com.gabdrahmanov.enums.TestEntityOneEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class TestEntityOne extends RegistryEntity {
 
     @OneToOne
     private TestEntityTwo previous;
+    @OneToOne
+    private TestEntityThree problemEntity;
 
     @ManyToOne
     @JoinColumn
@@ -52,4 +55,10 @@ public class TestEntityOne extends RegistryEntity {
 
     @Column
     private Integer integer;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_entity_id")
+    private TestEntityOne previousEntity;
+
+    private TestEntityOneEnum entityOneEnum;
 }

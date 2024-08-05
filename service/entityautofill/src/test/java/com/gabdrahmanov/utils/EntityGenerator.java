@@ -20,7 +20,10 @@ public class EntityGenerator {
         for (Field field : entityClass.getDeclaredFields()) {
             field.setAccessible(true);
             try {
-                if (!field.getType().getName().equals(parentEntity.getName())) {
+                if (field.getType().getName().equals(parentEntity.getName())) {
+                    Object nestedEntity = field.getType().getDeclaredConstructor().newInstance();
+                    field.set(entity, nestedEntity);
+                } else {
                     Class<?> fieldType = field.getType();
 
                     // Проверка на вложенную Entity
