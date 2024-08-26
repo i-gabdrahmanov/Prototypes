@@ -1,3 +1,6 @@
 rootProject.name = 'Prototypes'
 include ':service'
 include ':service:entityautofill'
+include 'service:kafka'
+findProject(':service:kafka')?.name = 'kafka'
+
