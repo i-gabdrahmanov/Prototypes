@@ -28,6 +28,7 @@ dependencies {
 
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.h2database:h2:2.1.214'
+    implementation 'com.google.guava:guava:32.0.0-jre'
 }
 tasks.named('test') {
     useJUnitPlatform()
