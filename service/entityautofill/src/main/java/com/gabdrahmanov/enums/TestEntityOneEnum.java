@@ -1,6 +1,5 @@
 package com.gabdrahmanov.enums;
 
-import com.gabdrahmanov.entity.DictionaryEnum;
 import com.gabdrahmanov.entity.RegistryEntity;
 import com.gabdrahmanov.entity.TestEntityOne;
 import lombok.Getter;
